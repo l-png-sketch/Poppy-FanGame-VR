@@ -3,24 +3,68 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Poppy Playtime - Chapter 2 VR - TEST</title>
+    <title>Poppy Playtime - Chapter 2 VR (Part 1) - OLD</title>
     <style>
-      body { margin: 0; overflow: hidden; background-color: #000; color: white; font-family: sans-serif; }
+      body {
+        margin: 0;
+        overflow: hidden;
+        background-color: #000;
+        color: white;
+        font-family: sans-serif;
+      }
       #ui-layer {
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
-        pointer-events: none; z-index: 10;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        pointer-events: none;
+        z-index: 10;
       }
       #debug-menu {
-        pointer-events: auto; background: rgba(20, 20, 20, 0.9); border: 2px solid #0ff;
-        padding: 10px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 10px; align-items: center;
+        pointer-events: auto;
+        background: rgba(20, 20, 20, 0.9);
+        border: 2px solid #0ff;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
       }
-      #debug-menu select, #debug-menu button {
-        pointer-events: auto; padding: 10px; font-size: 14px; background: #333; color: white; border: 1px solid #777; cursor: pointer;
+      #debug-menu select,
+      #debug-menu button {
+        pointer-events: auto;
+        padding: 10px;
+        font-size: 14px;
+        background: #333;
+        color: white;
+        border: 1px solid #777;
+        cursor: pointer;
       }
-      #debug-menu button:hover { background: #555; }
-      .vr-btn-container button { pointer-events: auto !important; z-index: 9999 !important; transform: scale(1.2); }
-      #error-msg { display: none; color: #ff5555; background: rgba(0, 0, 0, 0.9); padding: 20px; border: 2px solid red; font-size: 20px; max-width: 80%; margin-top: 20px; }
+      #debug-menu button:hover {
+        background: #555;
+      }
+      .vr-btn-container button {
+        pointer-events: auto !important;
+        z-index: 9999 !important;
+        transform: scale(1.2);
+      }
+      #error-msg {
+        display: none;
+        color: #ff5555;
+        background: rgba(0, 0, 0, 0.9);
+        padding: 20px;
+        border: 2px solid red;
+        font-size: 20px;
+        max-width: 80%;
+        margin-top: 20px;
+      }
     </style>
     <script type="importmap">
       {
@@ -33,25 +77,27 @@
   </head>
   <body>
     <div id="ui-layer">
-      <h1 style="color: #00ffff; font-size: 50px; text-shadow: 2px 2px #000; margin-bottom: 5px;">POPPY VR: CHAPTER 2</h1>
+      <h1
+        style="
+          color: #00ffff;
+          font-size: 50px;
+          text-shadow: 2px 2px #000;
+          margin-bottom: 5px;
+        "
+      >
+        POPPY VR: CHAPTER 2
+      </h1>
       <div id="debug-menu">
         <strong>WARPS:</strong>
         <select id="dbg-room">
           <option value="startDrop">1. Warehouse Drop</option>
           <option value="gameStation">2. Game Station Hub</option>
           <option value="musicalMemory">3. Musical Memory</option>
-          <option value="wackAWuggy">4. Wack-A-Wuggy</option>
-          <option value="statuesChase">5. Statues Chase</option>
-          <option value="trainStation">6. Train Station (Finale)</option>
+          <option value="wackAWuggy">4. Wack-A-Wuggy (NEW!)</option>
+          <option value="statuesChase">5. Statues Chase!</option>
         </select>
         <button id="dbg-warp">Warp</button>
       </div>
-      <p style="font-size: 16px; background: rgba(0,0,0,0.8); padding: 15px; border-radius: 10px; max-width: 800px; line-height: 1.5;">
-            <strong>L/R Triggers:</strong> Fire Hands | <strong>X/A Buttons:</strong> Swap Hands<br>
-            <strong style="color: #00ff00;">Green Hand:</strong> Absorbs electricity for 5 seconds.<br>
-            <strong style="color: #555555;">Shadow Hand:</strong> Shoots backwards.<br>
-            <strong style="color: #00ffff;">L-Grip:</strong> Project Ghost Clone | <strong style="color: #ff00ff;">R-Grip:</strong> Swap to Clone
-      </p>
       <div class="vr-btn-container" id="vr-btn-container"></div>
       <div id="error-msg"></div>
     </div>
@@ -62,184 +108,380 @@
 
       if (!navigator.xr) {
         document.getElementById("error-msg").style.display = "block";
-        document.getElementById("error-msg").innerHTML = `<strong>WebXR Blocked!</strong> HTTPS Required.`;
+        document.getElementById(
+          "error-msg"
+        ).innerHTML = `<strong>WebXR Blocked!</strong> HTTPS Required.`;
       }
 
+      // Adjusted FOV for more realistic perspective
       const scene = new THREE.Scene();
       scene.fog = new THREE.FogExp2(0x1a1a1a, 0.001);
-      const camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 2000);
+      const camera = new THREE.PerspectiveCamera(
+        80,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        2000
+      );
 
-      const WORLD_SCALE = 12; 
+      const WORLD_SCALE = 12; // Adjusted scale for better proportions
       const playerRig = new THREE.Group();
       playerRig.scale.set(WORLD_SCALE, WORLD_SCALE, WORLD_SCALE);
-      scene.add(playerRig); playerRig.add(camera);
+      scene.add(playerRig);
+      playerRig.add(camera);
 
       const renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setClearColor(0x0a0a0a); renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.xr.enabled = true; document.body.appendChild(renderer.domElement);
-      document.getElementById("vr-btn-container").appendChild(VRButton.createButton(renderer));
-      renderer.xr.addEventListener("sessionstart", () => { document.getElementById("ui-layer").style.display = "none"; });
-      renderer.xr.addEventListener("sessionend", () => { document.getElementById("ui-layer").style.display = "flex"; });
+      renderer.setClearColor(0x0a0a0a);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.xr.enabled = true;
+      document.body.appendChild(renderer.domElement);
+      document
+        .getElementById("vr-btn-container")
+        .appendChild(VRButton.createButton(renderer));
+      renderer.xr.addEventListener("sessionstart", () => {
+        document.getElementById("ui-layer").style.display = "none";
+      });
+      renderer.xr.addEventListener("sessionend", () => {
+        document.getElementById("ui-layer").style.display = "flex";
+      });
 
-      const hemiLight = new THREE.HemisphereLight(0xffffff, 0x666677, 1.2); scene.add(hemiLight);
-      const flashLight = new THREE.PointLight(0xffffff, 2.0, 500); playerRig.add(flashLight);
+      const hemiLight = new THREE.HemisphereLight(0xffffff, 0x666677, 1.2);
+      scene.add(hemiLight);
+      const flashLight = new THREE.PointLight(0xffffff, 2.0, 500);
+      playerRig.add(flashLight);
 
       // Rear View Mirror Setup
       const mirrorTarget = new THREE.WebGLRenderTarget(256, 256);
-      const rearCamera = new THREE.PerspectiveCamera(80, 1, 0.1, 1000); scene.add(rearCamera);
+      const rearCamera = new THREE.PerspectiveCamera(80, 1, 0.1, 1000);
+      scene.add(rearCamera);
 
       // --- Core States ---
-      const player = { x: 100, z: 300, w: 10, h: 10, speed: 3.0, world: "real" };
-      let currentRoom = "startDrop"; let isMirrorWorld = false; let currentObjective = "";
-      let isDead = false; let isTeleporting = false;
+      const player = {
+        x: 100,
+        z: 300,
+        w: 10,
+        h: 10,
+        speed: 2.5,
+        world: "real",
+      };
+      let currentRoom = "startDrop";
+      let isMirrorWorld = false;
+      let currentObjective = "";
+      let isDead = false;
+      let isTeleporting = false;
 
       let inventory = {
-        hasGrabPack: true, hasRedHand: true, hasPinkHand: true, hasGreenHand: true,
-        hasCrystalHand: true, hasShadowHand: true, hasCubeHand: false,
+        hasGrabPack: true,
+        hasRedHand: true,
+        hasPinkHand: true,
+        hasGreenHand: true,
+        hasCrystalHand: true,
+        hasShadowHand: true,
+        hasCubeHand: false,
       };
-      
       let flags = {
-        stationPower: false, memoryBeaten: false, wackAWuggyBeaten: false, 
-        statuesEscaped: false, trainPowered: false, trainUnlocked: false,
-        statueLightOn: false, statueTimer: 0, greenChargeTime: 0
+        stationPower: false,
+        memoryBeaten: false,
+        wackAWuggyBeaten: false,
       };
 
-      let walls = []; let shootables = []; let triggers = []; let items = [];
-      let floorSwitches = []; let roomMeshes = []; let signs = [];
+      let walls = [];
+      let shootables = [];
+      let triggers = [];
+      let items = [];
+      let floorSwitches = [];
+      let roomMeshes = [];
       let uiContext, uiTexture;
+      let playerPath = [];
 
       // --- ASTRAL CLONE LOGIC ---
       let isControllingClone = false;
       let mirrorClone = { active: false, x: 0, z: 0, world: "mirror" };
 
-      const realBodyMesh = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 20, 16), new THREE.MeshLambertMaterial({ color: 0xaa0000, transparent: true, opacity: 0.8 }));
-      realBodyMesh.position.y = 10; scene.add(realBodyMesh); realBodyMesh.visible = false;
+      const realBodyMesh = new THREE.Mesh(
+        new THREE.CylinderGeometry(5, 5, 20, 16),
+        new THREE.MeshLambertMaterial({
+          color: 0xaa0000,
+          transparent: true,
+          opacity: 0.8,
+        })
+      );
+      realBodyMesh.position.y = 10;
+      scene.add(realBodyMesh);
+      realBodyMesh.visible = false;
       const cloneGroup = new THREE.Group();
-      const cloneMesh = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 20, 16), new THREE.MeshLambertMaterial({ color: 0x00ffff, transparent: true, opacity: 0.6 }));
-      cloneMesh.position.y = 10; cloneGroup.add(cloneMesh); scene.add(cloneGroup); cloneGroup.visible = false;
+      const cloneMesh = new THREE.Mesh(
+        new THREE.CylinderGeometry(5, 5, 20, 16),
+        new THREE.MeshLambertMaterial({
+          color: 0x00ffff,
+          transparent: true,
+          opacity: 0.6,
+        })
+      );
+      cloneMesh.position.y = 10;
+      cloneGroup.add(cloneMesh);
+      scene.add(cloneGroup);
+      cloneGroup.visible = false;
 
       const wireMatNormal = new THREE.MeshBasicMaterial({ color: 0xaaaaaa });
 
       const createHand = (colorHex, specialProps = {}) => {
-        let geometry = specialProps.isCube ? new THREE.BoxGeometry(6, 6, 6) : new THREE.SphereGeometry(3, 16, 16);
-        let mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ color: colorHex, transparent: specialProps.transparent || false, opacity: specialProps.opacity || 1.0 }));
-        mesh.add(new THREE.PointLight(colorHex, 8.0, 500)); scene.add(mesh); mesh.visible = false;
-        let wire = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 1, 8), wireMatNormal); scene.add(wire); wire.visible = false;
-        return { state: "idle", mesh: mesh, wire: wire, dir: new THREE.Vector3(), speed: 15, maxDist: 600, dist: 0, color: colorHex, ...specialProps };
+        let geometry = specialProps.isCube
+          ? new THREE.BoxGeometry(6, 6, 6)
+          : new THREE.SphereGeometry(3, 16, 16);
+        let mesh = new THREE.Mesh(
+          geometry,
+          new THREE.MeshBasicMaterial({
+            color: colorHex,
+            transparent: specialProps.transparent || false,
+            opacity: specialProps.opacity || 1.0,
+          })
+        );
+        mesh.add(new THREE.PointLight(colorHex, 8.0, 500));
+        scene.add(mesh);
+        mesh.visible = false;
+        let wire = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.3, 0.3, 1, 8),
+          wireMatNormal
+        );
+        scene.add(wire);
+        wire.visible = false;
+        return {
+          state: "idle",
+          mesh: mesh,
+          wire: wire,
+          dir: new THREE.Vector3(),
+          speed: 15,
+          maxDist: 600,
+          dist: 0,
+          color: colorHex,
+          ...specialProps,
+        };
       };
 
       const blueHand = createHand(0x00aaff, { name: "BLUE" });
       const pinkHand = createHand(0xff00ff, { name: "PINK" });
       const redHand = createHand(0xff0000, { name: "RED" });
       const greenHand = createHand(0x00ff00, { name: "GRN" });
-      const crystalHand = createHand(0x00ffff, { transparent: true, opacity: 0.5, ignoresWalls: true, name: "CRYS" });
-      const shadowHand = createHand(0x222222, { shootsBackward: true, name: "SHAD" });
-      const whiteHand = createHand(0xffffff, { name: "GHOST", ignoresWalls: true });
-      const cubeHand = createHand(0xffffff, { name: "CUBE", isCube: true, isHeavy: true });
+      const crystalHand = createHand(0x00ffff, {
+        transparent: true,
+        opacity: 0.5,
+        ignoresWalls: true,
+        name: "CRYS",
+      });
+      const shadowHand = createHand(0x222222, {
+        shootsBackward: true,
+        name: "SHAD",
+      });
+
+      const whiteHand = createHand(0xffffff, {
+        name: "GHOST",
+        ignoresWalls: true,
+      });
+      const cubeHand = createHand(0xffffff, {
+        name: "CUBE",
+        isCube: true,
+        isHeavy: true,
+      });
 
       let leftHandInventory = [blueHand, pinkHand, shadowHand];
       let rightHandInventory = [redHand, greenHand, crystalHand];
-      let activeLeftHand = blueHand; let activeRightHand = redHand;
+      let activeLeftHand = blueHand;
+      let activeRightHand = redHand;
       let cloneActiveHand = whiteHand;
 
       // --- Wrist UI & Rear View Mirror ---
       function createWristUI() {
         const uiGroup = new THREE.Group();
-        const canvas = document.createElement("canvas"); canvas.width = 512; canvas.height = 300;
-        uiContext = canvas.getContext("2d"); uiTexture = new THREE.CanvasTexture(canvas);
-        const uiMesh = new THREE.Mesh(new THREE.PlaneGeometry(0.15, 0.088), new THREE.MeshBasicMaterial({ map: uiTexture }));
-        uiMesh.rotation.x = -Math.PI / 4; uiMesh.position.set(0, 0.08, 0.05); uiGroup.add(uiMesh);
+        const canvas = document.createElement("canvas");
+        canvas.width = 512;
+        canvas.height = 300;
+        uiContext = canvas.getContext("2d");
+        uiTexture = new THREE.CanvasTexture(canvas);
+        const uiMesh = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.15, 0.088),
+          new THREE.MeshBasicMaterial({ map: uiTexture })
+        );
+        uiMesh.rotation.x = -Math.PI / 4;
+        uiMesh.position.set(0, 0.08, 0.05);
+        uiGroup.add(uiMesh);
 
-        const mirrorScreen = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 0.12), new THREE.MeshBasicMaterial({ map: mirrorTarget.texture, side: THREE.DoubleSide }));
-        mirrorScreen.rotation.x = -Math.PI / 4; mirrorScreen.position.set(0, 0.18, 0.01); uiGroup.add(mirrorScreen);
+        // Restored Rear View Mirror Plane!
+        const mirrorScreen = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.12, 0.12),
+          new THREE.MeshBasicMaterial({
+            map: mirrorTarget.texture,
+            side: THREE.DoubleSide,
+          })
+        );
+        mirrorScreen.rotation.x = -Math.PI / 4;
+        mirrorScreen.position.set(0, 0.18, 0.01);
+        uiGroup.add(mirrorScreen);
+
         return uiGroup;
       }
 
       function updateWristUI(promptText = "") {
         if (!uiContext) return;
-        uiContext.fillStyle = "#111"; uiContext.fillRect(0, 0, 512, 300);
-        uiContext.strokeStyle = "#555"; uiContext.lineWidth = 10; uiContext.strokeRect(0, 0, 512, 300);
-        uiContext.fillStyle = "#ffaa00"; uiContext.fillRect(0, 0, 512, 40);
-        uiContext.fillStyle = "#000"; uiContext.font = "bold 22px Courier New";
+        uiContext.fillStyle = "#111";
+        uiContext.fillRect(0, 0, 512, 300);
+        uiContext.strokeStyle = "#555";
+        uiContext.lineWidth = 10;
+        uiContext.strokeRect(0, 0, 512, 300);
+        uiContext.fillStyle = "#ffaa00";
+        uiContext.fillRect(0, 0, 512, 40);
+        uiContext.fillStyle = "#000";
+        uiContext.font = "bold 22px Courier New";
         uiContext.fillText(`OBJ: ${currentObjective}`, 10, 28);
-        
         uiContext.font = "24px Courier New";
-        if (isControllingClone) {
-          uiContext.fillStyle = "#fff"; uiContext.fillText(`CLONE: ${cloneActiveHand.name} HAND`, 20, 80);
-          if (inventory.hasCubeHand) { uiContext.fillStyle = "#ccc"; uiContext.fillText(`(Press X/A to Swap Ghost/Cube)`, 20, 120); }
-          uiContext.fillStyle = isMirrorWorld ? "#0ff" : "#f00";
-          uiContext.fillText(isMirrorWorld ? `R-Grip: Swap to Real Body` : `RETURN TO MIRROR TO SWAP!`, 20, 160);
-        } else {
-          uiContext.fillStyle = "#0af"; uiContext.fillText(`L: ${activeLeftHand.name}`, 20, 80);
-          
-          let greenStatus = (activeRightHand === greenHand && flags.greenChargeTime > 0) ? ` [CHARGED: ${Math.ceil(flags.greenChargeTime/60)}s]` : "";
-          uiContext.fillStyle = activeRightHand === greenHand && flags.greenChargeTime > 0 ? "#ff0" : "#f00";
-          uiContext.fillText(`R: ${activeRightHand.name}${greenStatus}`, 20, 120);
 
+        if (isControllingClone) {
+          uiContext.fillStyle = "#fff";
+          uiContext.fillText(`L/R: ${cloneActiveHand.name} HAND`, 20, 80);
+          if (inventory.hasCubeHand) {
+            uiContext.fillStyle = "#ccc";
+            uiContext.fillText(`(Press X/A to Swap Ghost Hands)`, 20, 120);
+          }
+          uiContext.fillStyle = isMirrorWorld ? "#0ff" : "#f00";
+          uiContext.fillText(
+            isMirrorWorld
+              ? `R-Grip: Swap to Real Body`
+              : `RETURN TO MIRROR TO SWAP!`,
+            20,
+            160
+          );
+        } else {
+          uiContext.fillStyle = "#0af";
+          uiContext.fillText(`L: ${activeLeftHand.name}`, 20, 80);
+          uiContext.fillStyle = "#f00";
+          uiContext.fillText(`R: ${activeRightHand.name}`, 20, 120);
           if (isMirrorWorld) {
             uiContext.fillStyle = mirrorClone.active ? "#0ff" : "#555";
-            uiContext.fillText(`CLONE: ${mirrorClone.active ? "READY (R-Grip to Swap)" : "DROP (L-Grip)"}`, 20, 160);
+            uiContext.fillText(
+              `CLONE: ${
+                mirrorClone.active ? "READY (R-Grip to Swap)" : "DROP (L-Grip)"
+              }`,
+              20,
+              160
+            );
           }
         }
-        if (promptText) { uiContext.fillStyle = "#ff0"; uiContext.fillText(promptText, 20, 260); }
+        if (promptText) {
+          uiContext.fillStyle = "#ff0";
+          uiContext.fillText(promptText, 20, 260);
+        }
         uiTexture.needsUpdate = true;
       }
 
       let leftController, rightController, leftNozzle, rightNozzle;
       function setupController(index) {
-        const controller = renderer.xr.getController(index); playerRig.add(controller);
-        const grip = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.02, 0.15, 16), new THREE.MeshLambertMaterial({ color: 0x333333 })); grip.rotation.x = Math.PI / 2;
-        const nozzle = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.035, 0.1, 16), new THREE.MeshLambertMaterial({ color: 0x555555 })); nozzle.position.set(0, 0, -0.1); nozzle.rotation.x = Math.PI / 2;
-        controller.add(grip); controller.add(nozzle);
+        const controller = renderer.xr.getController(index);
+        playerRig.add(controller);
+        const grip = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.015, 0.02, 0.15, 16),
+          new THREE.MeshLambertMaterial({ color: 0x333333 })
+        );
+        grip.rotation.x = Math.PI / 2;
+        const nozzle = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.025, 0.035, 0.1, 16),
+          new THREE.MeshLambertMaterial({ color: 0x555555 })
+        );
+        nozzle.position.set(0, 0, -0.1);
+        nozzle.rotation.x = Math.PI / 2;
+        controller.add(grip);
+        controller.add(nozzle);
 
         controller.addEventListener("connected", function (event) {
           this.handedness = event.data.handedness;
           if (this.handedness === "left") {
-            leftController = this; leftNozzle = nozzle; leftNozzle.material.color.setHex(activeLeftHand.color);
-            this.add(createWristUI()); updateWristUI();
+            leftController = this;
+            leftNozzle = nozzle;
+            leftNozzle.material.color.setHex(activeLeftHand.color);
+            this.add(createWristUI());
+            updateWristUI();
           }
           if (this.handedness === "right") {
-            rightController = this; rightNozzle = nozzle; rightNozzle.material.color.setHex(activeRightHand.color);
+            rightController = this;
+            rightNozzle = nozzle;
+            rightNozzle.material.color.setHex(activeRightHand.color);
           }
         });
 
         controller.addEventListener("selectstart", (e) => {
-          let h = isControllingClone ? cloneActiveHand : (e.target.handedness === "left" ? activeLeftHand : activeRightHand);
-          if (h.state === "idle") fireHand(h, e.target);
+          let h = isControllingClone
+            ? cloneActiveHand
+            : e.target.handedness === "left"
+            ? activeLeftHand
+            : activeRightHand;
+          if (h.state === "idle") {
+            fireHand(h, e.target);
+          }
         });
         return controller;
       }
-      setupController(0); setupController(1);
+      setupController(0);
+      setupController(1);
 
       function fireHand(hand, sourceTransform) {
-        hand.state = "extending"; hand.dist = 0; sourceTransform.getWorldPosition(hand.mesh.position);
-        let forwardDir = new THREE.Vector3(0, 0, -1); forwardDir.applyQuaternion(sourceTransform.getWorldQuaternion(new THREE.Quaternion()));
-        if (hand.shootsBackward && !isControllingClone) forwardDir.multiplyScalar(-1);
-        hand.dir.copy(forwardDir); hand.mesh.visible = true; hand.wire.visible = true;
+        hand.state = "extending";
+        hand.dist = 0;
+        sourceTransform.getWorldPosition(hand.mesh.position);
+        let forwardDir = new THREE.Vector3(0, 0, -1);
+        forwardDir.applyQuaternion(
+          sourceTransform.getWorldQuaternion(new THREE.Quaternion())
+        );
+        if (hand.shootsBackward && !isControllingClone)
+          forwardDir.multiplyScalar(-1);
+        hand.dir.copy(forwardDir);
+        hand.mesh.visible = true;
+        hand.wire.visible = true;
       }
 
-      const evilHuggy = {
-        x: 0, z: 0, w: 20, h: 20, active: false, speed: 3.0,
-        mesh: new THREE.Mesh(new THREE.BoxGeometry(20, 40, 10), new THREE.MeshBasicMaterial({ color: 0xffffff })),
+      const huggy = {
+        x: 0,
+        z: 0,
+        w: 20,
+        h: 20,
+        active: false,
+        speed: 2.5,
+        mesh: new THREE.Mesh(
+          new THREE.BoxGeometry(20, 40, 10),
+          new THREE.MeshBasicMaterial({ color: 0x0044cc })
+        ),
       };
-      evilHuggy.mesh.position.y = 20; scene.add(evilHuggy.mesh);
+      huggy.mesh.position.y = 20;
+      scene.add(huggy.mesh);
+      const evilHuggy = {
+        x: 0,
+        z: 0,
+        w: 20,
+        h: 20,
+        active: false,
+        speed: 3.0,
+        mesh: new THREE.Mesh(
+          new THREE.BoxGeometry(20, 40, 10),
+          new THREE.MeshBasicMaterial({ color: 0xffffff })
+        ),
+      };
+      evilHuggy.mesh.position.y = 20;
+      scene.add(evilHuggy.mesh);
 
-      function isColliding(r1, r2) { return r1.x < r2.x + r2.w && r1.x + r1.w > r2.x && r1.y < r2.y + r2.h && r1.y + r1.h > r2.y; }
-      function alertMsg(msg) { updateWristUI(msg); setTimeout(() => updateWristUI(), 4000); }
-
-      function createSign(text, x, y, z, rotY) {
-            const canvas = document.createElement('canvas'); canvas.width = 512; canvas.height = 128;
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#111'; ctx.fillRect(0,0,512,128);
-            ctx.strokeStyle = '#0ff'; ctx.lineWidth = 10; ctx.strokeRect(0,0,512,128);
-            ctx.fillStyle = '#fff'; ctx.font = '36px Courier New'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            ctx.fillText(text, 256, 64);
-            const tex = new THREE.CanvasTexture(canvas);
-            const mesh = new THREE.Mesh(new THREE.PlaneGeometry(60, 15), new THREE.MeshBasicMaterial({map: tex}));
-            mesh.position.set(x, y, z); mesh.rotation.y = rotY; scene.add(mesh); roomMeshes.push(mesh);
+      function isColliding(r1, r2) {
+        return (
+          r1.x < r2.x + r2.w &&
+          r1.x + r1.w > r2.x &&
+          r1.y < r2.y + r2.h &&
+          r1.y + r1.h > r2.y
+        );
+      }
+      function alertMsg(msg) {
+        updateWristUI(msg);
+        setTimeout(() => updateWristUI(), 4000);
       }
 
-      let leftXPressed = false; let rightAPressed = false; let leftGripPressed = false; let rightGripPressed = false;
+      let leftXPressed = false;
+      let rightAPressed = false;
+      let leftGripPressed = false;
+      let rightGripPressed = false;
       function cycleHand(arr, currentHand) {
         let nextIdx = (arr.indexOf(currentHand) + 1) % arr.length;
         while (true) {
@@ -254,416 +496,884 @@
       }
 
       function pollGamepads() {
-        const session = renderer.xr.getSession(); if (!session) return;
+        const session = renderer.xr.getSession();
+        if (!session) return;
         for (const source of session.inputSources) {
           if (!source.gamepad) continue;
           if (source.handedness === "left") {
-            if (source.gamepad.buttons[4] && source.gamepad.buttons[4].pressed) {
+            if (
+              source.gamepad.buttons[4] &&
+              source.gamepad.buttons[4].pressed
+            ) {
               if (!leftXPressed) {
                 if (isControllingClone && inventory.hasCubeHand) {
-                  cloneActiveHand = cloneActiveHand === whiteHand ? cubeHand : whiteHand;
+                  cloneActiveHand =
+                    cloneActiveHand === whiteHand ? cubeHand : whiteHand;
                   if (leftNozzle) leftNozzle.material.color.setHex(0xffffff);
                 } else if (!isControllingClone) {
                   activeLeftHand = cycleHand(leftHandInventory, activeLeftHand);
-                  if (leftNozzle) leftNozzle.material.color.setHex(activeLeftHand.color);
+                  if (leftNozzle)
+                    leftNozzle.material.color.setHex(activeLeftHand.color);
                 }
-                updateWristUI(); leftXPressed = true;
+                updateWristUI();
+                leftXPressed = true;
               }
-            } else leftXPressed = false;
+            } else {
+              leftXPressed = false;
+            }
 
-            if (source.gamepad.buttons[1] && source.gamepad.buttons[1].pressed) {
-              if (!leftGripPressed && isMirrorWorld && !isControllingClone && player.world === "mirror") {
-                leftGripPressed = true; mirrorClone.active = !mirrorClone.active;
-                if (mirrorClone.active) { mirrorClone.x = player.x; mirrorClone.z = player.z; mirrorClone.world = "mirror"; }
-                alertMsg(mirrorClone.active ? "CLONE DROPPED! R-Grip to Swap." : "CLONE RECALLED."); updateWristUI();
+            if (
+              source.gamepad.buttons[1] &&
+              source.gamepad.buttons[1].pressed
+            ) {
+              if (
+                !leftGripPressed &&
+                isMirrorWorld &&
+                !isControllingClone &&
+                player.world === "mirror"
+              ) {
+                leftGripPressed = true;
+                mirrorClone.active = !mirrorClone.active;
+                if (mirrorClone.active) {
+                  mirrorClone.x = player.x;
+                  mirrorClone.z = player.z;
+                  mirrorClone.world = "mirror";
+                }
+                alertMsg(
+                  mirrorClone.active
+                    ? "CLONE DROPPED! R-Grip to Swap."
+                    : "CLONE RECALLED."
+                );
+                updateWristUI();
               }
             } else leftGripPressed = false;
           }
           if (source.handedness === "right") {
-            if (source.gamepad.buttons[4] && source.gamepad.buttons[4].pressed) {
+            if (
+              source.gamepad.buttons[4] &&
+              source.gamepad.buttons[4].pressed
+            ) {
               if (!rightAPressed) {
-                if (isControllingClone && inventory.hasCubeHand) { cloneActiveHand = cloneActiveHand === whiteHand ? cubeHand : whiteHand; } 
-                else if (!isControllingClone) {
-                  activeRightHand = cycleHand(rightHandInventory, activeRightHand);
-                  if (rightNozzle) rightNozzle.material.color.setHex(activeRightHand.color);
+                if (isControllingClone && inventory.hasCubeHand) {
+                  cloneActiveHand =
+                    cloneActiveHand === whiteHand ? cubeHand : whiteHand;
+                } else if (!isControllingClone) {
+                  activeRightHand = cycleHand(
+                    rightHandInventory,
+                    activeRightHand
+                  );
+                  if (rightNozzle)
+                    rightNozzle.material.color.setHex(activeRightHand.color);
                 }
-                updateWristUI(); rightAPressed = true;
+                updateWristUI();
+                rightAPressed = true;
               }
-            } else rightAPressed = false;
+            } else {
+              rightAPressed = false;
+            }
 
-            if (source.gamepad.buttons[1] && source.gamepad.buttons[1].pressed) {
+            if (
+              source.gamepad.buttons[1] &&
+              source.gamepad.buttons[1].pressed
+            ) {
               if (!rightGripPressed && isMirrorWorld && mirrorClone.active) {
-                rightGripPressed = true; isControllingClone = !isControllingClone;
-                if (leftNozzle) leftNozzle.material.color.setHex(isControllingClone ? 0xffffff : activeLeftHand.color);
-                alertMsg(isControllingClone ? "CONTROLLING CLONE!" : "CONTROLLING REAL BODY!"); updateWristUI();
+                rightGripPressed = true;
+                isControllingClone = !isControllingClone;
+                if (leftNozzle)
+                  leftNozzle.material.color.setHex(
+                    isControllingClone ? 0xffffff : activeLeftHand.color
+                  );
+                alertMsg(
+                  isControllingClone
+                    ? "CONTROLLING CLONE!"
+                    : "CONTROLLING REAL BODY!"
+                );
+                updateWristUI();
               }
             } else rightGripPressed = false;
           }
         }
       }
 
-      let snapTurnReady = true; let moveDX = 0; let moveDZ = 0;
+      let snapTurnReady = true;
       function handleLocomotion() {
-        const session = renderer.xr.getSession(); if (!session) return;
-        moveDX = 0; moveDZ = 0;
+        const session = renderer.xr.getSession();
+        if (!session) return;
+        let dx = 0;
+        let dz = 0;
         for (const source of session.inputSources) {
           if (!source.gamepad) continue;
           if (source.handedness === "left") {
-            const xAxis = source.gamepad.axes[2] || 0; const yAxis = source.gamepad.axes[3] || 0;
-            if (Math.abs(yAxis) > 0.1) moveDZ += yAxis * player.speed;
-            if (Math.abs(xAxis) > 0.1) moveDX += xAxis * player.speed;
+            const xAxis = source.gamepad.axes[2] || 0;
+            const yAxis = source.gamepad.axes[3] || 0;
+            if (Math.abs(yAxis) > 0.1) dz += yAxis * player.speed;
+            if (Math.abs(xAxis) > 0.1) dx += xAxis * player.speed;
           }
           if (source.handedness === "right") {
             const xAxis = source.gamepad.axes[2] || 0;
             if (Math.abs(xAxis) > 0.5) {
-              if (snapTurnReady) { playerRig.rotation.y -= Math.sign(xAxis) * (Math.PI / 4); snapTurnReady = false; }
+              if (snapTurnReady) {
+                playerRig.rotation.y -= Math.sign(xAxis) * (Math.PI / 4);
+                snapTurnReady = false;
+              }
             } else snapTurnReady = true;
           }
         }
 
-        if (moveDX !== 0 || moveDZ !== 0) {
-          let forward = new THREE.Vector3(); camera.getWorldDirection(forward); forward.y = 0; forward.normalize();
-          let right = new THREE.Vector3().crossVectors(forward, new THREE.Vector3(0, 1, 0)).normalize();
-          let moveX = right.x * moveDX - forward.x * moveDZ; let moveZ = right.z * moveDX - forward.z * moveDZ;
+        if (dx !== 0 || dz !== 0) {
+          let forward = new THREE.Vector3();
+          camera.getWorldDirection(forward);
+          forward.y = 0;
+          forward.normalize();
+          let right = new THREE.Vector3()
+            .crossVectors(forward, new THREE.Vector3(0, 1, 0))
+            .normalize();
+          let moveX = right.x * dx - forward.x * dz;
+          let moveZ = right.z * dx - forward.z * dz;
 
           let activeBody = isControllingClone ? mirrorClone : player;
-          let activeX = activeBody.x; let activeZ = activeBody.z;
-          let pRect = { x: activeX - player.w / 2, y: activeZ - player.h / 2, w: player.w, h: player.h };
+          let activeX = activeBody.x;
+          let activeZ = activeBody.z;
 
-          activeX += moveX; pRect.x = activeX - player.w / 2;
+          let pRect = {
+            x: activeX - player.w / 2,
+            y: activeZ - player.h / 2,
+            w: player.w,
+            h: player.h,
+          };
+
+          activeX += moveX;
+          pRect.x = activeX - player.w / 2;
           if (!isControllingClone || !cloneActiveHand.ignoresWalls) {
-            for (let w of walls) { if (!w.isPortal && isColliding(pRect, w)) { activeX -= moveX; pRect.x = activeX - player.w / 2; break; } }
+            for (let w of walls) {
+              if (w.isPortal) continue; // FIX: No collision on portals!
+              if (isColliding(pRect, w)) {
+                activeX -= moveX;
+                pRect.x = activeX - player.w / 2;
+                break;
+              }
+            }
           }
-          activeZ += moveZ; pRect.y = activeZ - player.h / 2;
+
+          activeZ += moveZ;
+          pRect.y = activeZ - player.h / 2;
           if (!isControllingClone || !cloneActiveHand.ignoresWalls) {
-            for (let w of walls) { if (!w.isPortal && isColliding(pRect, w)) { activeZ -= moveZ; pRect.y = activeZ - player.h / 2; break; } }
+            for (let w of walls) {
+              if (w.isPortal) continue; // FIX: No collision on portals!
+              if (isColliding(pRect, w)) {
+                activeZ -= moveZ;
+                pRect.y = activeZ - player.h / 2;
+                break;
+              }
+            }
           }
-          activeBody.x = activeX; activeBody.z = activeZ;
+
+          activeBody.x = activeX;
+          activeBody.z = activeZ;
         }
-        playerRig.position.set(isControllingClone ? mirrorClone.x : player.x, 0, isControllingClone ? mirrorClone.z : player.z);
+        playerRig.position.set(
+          isControllingClone ? mirrorClone.x : player.x,
+          0,
+          isControllingClone ? mirrorClone.z : player.z
+        );
       }
 
       function build3DRoom() {
-        roomMeshes.forEach((m) => scene.remove(m)); roomMeshes = [];
-        const floor = new THREE.Mesh(new THREE.PlaneGeometry(2000, 2000), new THREE.MeshLambertMaterial({ color: isMirrorWorld ? 0xdddddd : 0x222222 }));
-        floor.rotation.x = -Math.PI / 2; scene.add(floor); roomMeshes.push(floor);
+        roomMeshes.forEach((m) => scene.remove(m));
+        roomMeshes = [];
+        const floor = new THREE.Mesh(
+          new THREE.PlaneGeometry(2000, 2000),
+          new THREE.MeshLambertMaterial({
+            color: isMirrorWorld ? 0xdddddd : 0x222222,
+          })
+        );
+        floor.rotation.x = -Math.PI / 2;
+        scene.add(floor);
+        roomMeshes.push(floor);
 
         const addBlock = (item, color, height, yPos) => {
-          let fColor = color; if (isMirrorWorld && !item.isPortal && color !== 0xff0000 && color !== 0xffffff) fColor = 0xffffff - color;
-          const mesh = new THREE.Mesh(new THREE.BoxGeometry(item.w, height, item.h), new THREE.MeshLambertMaterial({ color: fColor, transparent: item.transparent, opacity: item.opacity || 1 }));
-          mesh.position.set(item.x + item.w / 2, yPos, item.y + item.h / 2); scene.add(mesh); roomMeshes.push(mesh);
+          let fColor = color;
+          if (
+            isMirrorWorld &&
+            !item.isPortal &&
+            color !== 0xff0000 &&
+            color !== 0xffffff
+          )
+            fColor = 0xffffff - color;
+          const mesh = new THREE.Mesh(
+            new THREE.BoxGeometry(item.w, height, item.h),
+            new THREE.MeshLambertMaterial({
+              color: fColor,
+              transparent: item.transparent,
+              opacity: item.opacity || 1,
+            })
+          );
+          mesh.position.set(item.x + item.w / 2, yPos, item.y + item.h / 2);
+          scene.add(mesh);
+          roomMeshes.push(mesh);
         };
         walls.forEach((w) => addBlock(w, w.color || 0x333333, 50, 25));
         shootables.forEach((s) => addBlock(s, s.color, 16, 20));
         items.forEach((i) => addBlock(i, i.color, 12, 6));
+        floorSwitches.forEach((sw) => {
+          let sMesh = new THREE.Mesh(
+            new THREE.BoxGeometry(sw.w, 4, sw.h),
+            new THREE.MeshLambertMaterial({ color: sw.color || 0xffff00 })
+          );
+          sMesh.position.set(sw.x + sw.w / 2, 2, sw.z + sw.h / 2);
+          scene.add(sMesh);
+          roomMeshes.push(sMesh);
+          sw.mesh = sMesh;
+        });
       }
 
-      const roomSpawns = { startDrop: { x: 400, z: 500 }, gameStation: { x: 400, z: 550 }, musicalMemory: { x: 400, z: 550 }, wackAWuggy: { x: 400, z: 500 }, statuesChase: { x: 400, z: 550 }, trainStation: { x: 400, z: 550 } };
-      let wackScore = 0; let memRound = 0; let memSeq = []; let memInputIdx = 0;
+      const roomSpawns = {
+        startDrop: { x: 400, z: 500 },
+        gameStation: { x: 400, z: 550 },
+        musicalMemory: { x: 400, z: 550 },
+        wackAWuggy: { x: 400, z: 500 },
+        statuesChase: { x: 400, z: 550 },
+      };
+      let wackScore = 0; // Tracks score for the new room
 
       function loadRoom(roomName, keepCoords = false) {
-        // Reset Clone status safely on room switch
-        isControllingClone = false; mirrorClone.active = false; cloneGroup.visible = false;
-        
         isMirrorWorld = roomName.startsWith("mirror_");
-        let baseRoom = isMirrorWorld ? roomName.replace("mirror_", "") : roomName;
-        currentRoom = roomName; walls = []; shootables = []; triggers = []; items = []; roomMeshes = []; signs = [];
-        wackScore = 0; memRound = 0; flags.statueLightOn = false; flags.greenChargeTime = 0;
-        
-        [blueHand, pinkHand, redHand, greenHand, crystalHand, shadowHand, whiteHand, cubeHand].forEach((h) => { h.state = "idle"; h.mesh.visible = false; h.wire.visible = false; });
-        evilHuggy.active = false; isDead = false; isTeleporting = false;
+        let baseRoom = isMirrorWorld
+          ? roomName.replace("mirror_", "")
+          : roomName;
+        currentRoom = roomName;
+        walls = [];
+        shootables = [];
+        triggers = [];
+        items = [];
+        floorSwitches = [];
+        wackScore = 0;
+        [
+          blueHand,
+          pinkHand,
+          redHand,
+          greenHand,
+          crystalHand,
+          shadowHand,
+          whiteHand,
+          cubeHand,
+        ].forEach((h) => {
+          h.state = "idle";
+          h.mesh.visible = false;
+          h.wire.visible = false;
+        });
+        huggy.active = false;
+        evilHuggy.active = false;
+        isDead = false;
+        isTeleporting = false;
 
+        // FIX: Only snap to spawn if we aren't walking through the mirror!
         if (roomSpawns[baseRoom] && !keepCoords) {
-            player.x = roomSpawns[baseRoom].x; player.z = roomSpawns[baseRoom].z; player.world = isMirrorWorld ? "mirror" : "real";
+          if (isControllingClone) {
+            mirrorClone.x = roomSpawns[baseRoom].x;
+            mirrorClone.z = roomSpawns[baseRoom].z;
+            mirrorClone.world = isMirrorWorld ? "mirror" : "real";
+          } else {
+            player.x = roomSpawns[baseRoom].x;
+            player.z = roomSpawns[baseRoom].z;
+            player.world = isMirrorWorld ? "mirror" : "real";
+          }
         }
 
-        // Add Portal
-        walls.push({ id: "mirrorPortal", x: 20, y: 250, w: 20, h: 100, color: 0xffffff, transparent: true, opacity: 0.8, isPortal: true });
-        triggers.push({ isPortal: true, x: 10, y: 250, w: 40, h: 100, action: () => {
-            if (isTeleporting) return; isTeleporting = true;
-            if (isControllingClone) mirrorClone.world = isMirrorWorld ? "real" : "mirror"; else player.world = isMirrorWorld ? "real" : "mirror";
-            if (isControllingClone) mirrorClone.x += 30; else player.x += 30;
-            alertMsg("Flipping Dimensions..."); setTimeout(() => loadRoom(isMirrorWorld ? baseRoom : "mirror_" + baseRoom, true), 500);
-        }});
+        walls.push({
+          id: "mirrorPortal",
+          x: 20,
+          y: 250,
+          w: 20,
+          h: 100,
+          color: 0xffffff,
+          transparent: true,
+          opacity: 0.8,
+          isPortal: true,
+        });
+
+        // FIX: Added 'isPortal: true' so the clone can touch it!
+        triggers.push({
+          isPortal: true,
+          x: 10,
+          y: 250,
+          w: 40,
+          h: 100,
+          action: () => {
+            if (isTeleporting) return;
+            isTeleporting = true;
+            if (isControllingClone)
+              mirrorClone.world = isMirrorWorld ? "real" : "mirror";
+            else player.world = isMirrorWorld ? "real" : "mirror";
+
+            // Push active body forward slightly so they don't get stuck in the trigger loop
+            if (isControllingClone) mirrorClone.x += 30;
+            else player.x += 30;
+
+            alertMsg("Flipping Dimensions...");
+            setTimeout(
+              () =>
+                loadRoom(isMirrorWorld ? baseRoom : "mirror_" + baseRoom, true),
+              500
+            );
+          },
+        });
+
+        walls.push({
+          id: "mirrorPortal",
+          x: 20,
+          y: 250,
+          w: 20,
+          h: 100,
+          color: 0xffffff,
+          transparent: true,
+          opacity: 0.8,
+          isPortal: true,
+        });
+        triggers.push({
+          x: 10,
+          y: 250,
+          w: 40,
+          h: 100,
+          action: () => {
+            if (isTeleporting) return;
+            isTeleporting = true;
+            if (isControllingClone)
+              mirrorClone.world = isMirrorWorld ? "real" : "mirror";
+            else player.world = isMirrorWorld ? "real" : "mirror";
+            alertMsg("Flipping Dimensions...");
+            setTimeout(
+              () => loadRoom(isMirrorWorld ? baseRoom : "mirror_" + baseRoom),
+              500
+            );
+          },
+        });
 
         if (baseRoom === "startDrop") {
           currentObjective = "Find the Game Station Hub";
-          walls.push({ x: 0, y: 0, w: 800, h: 20 }, { x: 0, y: 580, w: 800, h: 20 }, { x: 0, y: 20, w: 20, h: 230 }, { x: 0, y: 350, w: 20, h: 230 }, { x: 780, y: 20, w: 20, h: 560 });
-          createSign("ENTER MIRROR TO PROCEED", 400, 30, 200, 0);
-          triggers.push({ x: 0, y: 250, w: 20, h: 100, action: () => loadRoom(isMirrorWorld ? "mirror_gameStation" : "gameStation") });
-        
+          walls.push(
+            { x: 0, y: 0, w: 800, h: 20 },
+            { x: 0, y: 580, w: 800, h: 20 },
+            { x: 0, y: 20, w: 20, h: 230 },
+            { x: 0, y: 350, w: 20, h: 230 },
+            { x: 780, y: 20, w: 20, h: 560 }
+          );
+          triggers.push({
+            x: 0,
+            y: 250,
+            w: 20,
+            h: 100,
+            action: () =>
+              loadRoom(isMirrorWorld ? "mirror_gameStation" : "gameStation"),
+          });
         } else if (baseRoom === "gameStation") {
-          currentObjective = flags.stationPower ? "Enter Musical Memory (Right)" : "Use GREEN HAND to move electricity!";
-          walls.push({ x: 0, y: 0, w: 800, h: 20 }, { x: 0, y: 580, w: 800, h: 20 }, { x: 0, y: 20, w: 20, h: 230 }, { x: 0, y: 350, w: 20, h: 230 }, { x: 780, y: 20, w: 20, h: 230 }, { x: 780, y: 350, w: 20, h: 230 });
-          
-          if (!flags.stationPower) {
-              // The Green Hand Electricity Puzzle
-              shootables.push({ x: 200, y: 150, w: 40, h: 40, color: 0xffff00, onHit: (obj, hand) => {
-                  if (hand === greenHand) { flags.greenChargeTime = 300; alertMsg("GREEN HAND CHARGED! 5 SECONDS TO DEPOSIT!"); }
-                  else alertMsg("Need Green Hand to absorb power!");
-              }});
-              createSign("POWER SOURCE", 220, 45, 170, 0);
-
-              shootables.push({ x: 500, y: 150, w: 40, h: 40, color: 0x222222, onHit: (obj, hand) => {
-                  if (hand === greenHand && flags.greenChargeTime > 0) {
-                      flags.stationPower = true; flags.greenChargeTime = 0; obj.color = 0x00aa00;
-                      alertMsg("POWER RESTORED!"); walls = walls.filter(w=>w.id!=="memDoor"); build3DRoom();
-                  } else alertMsg("Socket is empty. Deposit power from Green Hand.");
-              }});
-              createSign("EMPTY SOCKET", 520, 45, 170, 0);
-
-              walls.push({ id: "memDoor", x: 780, y: 250, w: 20, h: 100, color: 0x333333 });
-          } else {
-              triggers.push({ x: 780, y: 250, w: 30, h: 100, action: () => loadRoom(isMirrorWorld ? "mirror_musicalMemory" : "musicalMemory") });
-          }
-
-        } else if (baseRoom === "musicalMemory") {
-          currentObjective = flags.memoryBeaten ? "Proceed to Wack-A-Wuggy!" : "Memory Puzzle: Round 1";
-          walls.push({ x: 0, y: 0, w: 800, h: 20 }, { x: 0, y: 580, w: 800, h: 20 }, { x: 0, y: 20, w: 20, h: 560 }, { x: 780, y: 20, w: 20, h: 560 });
-
-          // 3 Rounds of sequences
-          const rounds = [
-              [0x00aaff, 0xff0000, 0x00ff00], // Round 1
-              [0x00ff00, 0xff0000, 0xff00ff, 0x00aaff], // Round 2
-              [0xff00ff, 0x00aaff, 0xff0000, 0x00ff00, 0x00aaff] // Round 3
-          ];
-          
-          let btnColors = [0x00aaff, 0xff0000, 0x00ff00, 0xff00ff];
-          let bx = [300, 450, 300, 450]; let by = [200, 200, 350, 350];
-
-          if (!flags.memoryBeaten) {
-            memSeq = rounds[memRound];
-            createSign(`WATCH SEQUENCE: RND ${memRound+1}`, 400, 50, 100, 0);
-
-            btnColors.forEach((c, i) => {
-              shootables.push({ x: bx[i], y: by[i], w: 50, h: 50, color: c, onHit: () => {
-                  if (c === memSeq[memInputIdx]) {
-                    memInputIdx++; alertMsg(`Correct! ${memInputIdx}/${memSeq.length}`);
-                    if (memInputIdx >= memSeq.length) {
-                        memRound++; memInputIdx = 0;
-                        if (memRound >= rounds.length) { flags.memoryBeaten = true; alertMsg("Memory Cleared! Door Open!"); loadRoom(currentRoom); }
-                        else { alertMsg(`Round ${memRound+1} Starting...`); loadRoom(currentRoom); }
-                    }
-                  } else { memInputIdx = 0; alertMsg("WRONG! Restarting round."); }
-              }});
-            });
-            walls.push({ id: "wackDoor", x: 350, y: 0, w: 100, h: 20, color: 0x333333 });
-          } else {
-            createSign(`PUZZLE CLEARED. EXIT OPEN.`, 400, 50, 100, 0);
-            triggers.push({ x: 350, y: 0, w: 100, h: 20, action: () => loadRoom(isMirrorWorld ? "mirror_wackAWuggy" : "wackAWuggy") });
-          }
-
-        } else if (baseRoom === "wackAWuggy") {
-          currentObjective = flags.wackAWuggyBeaten ? "Proceed to Statues!" : "360 Wack-A-Wuggy! Use Heavy Cube Hand!";
-          walls.push({ x: 0, y: 0, w: 800, h: 20 }, { x: 0, y: 580, w: 800, h: 20 }, { x: 0, y: 20, w: 20, h: 560 }, { x: 780, y: 20, w: 20, h: 560 });
+          currentObjective = flags.stationPower
+            ? "Enter Musical Memory (Right)"
+            : "Find Cube Hand & Power Station!";
+          walls.push(
+            { x: 0, y: 0, w: 800, h: 20 },
+            { x: 0, y: 580, w: 800, h: 20 },
+            { x: 0, y: 20, w: 20, h: 230 },
+            { x: 0, y: 350, w: 20, h: 230 },
+            { x: 780, y: 20, w: 20, h: 230 },
+            { x: 780, y: 350, w: 20, h: 230 }
+          );
+          walls.push({ x: 300, y: 200, w: 200, h: 200, color: 0xaa2222 });
 
           if (!inventory.hasCubeHand && isMirrorWorld) {
-            items.push({ id: "cubePickup", x: 400, y: 300, w: 30, h: 30, color: 0xffffff, onCollect: () => {
-                inventory.hasCubeHand = true; cloneActiveHand = cubeHand; updateWristUI("Acquired Heavy Cube Hand!"); loadRoom(currentRoom);
-            }});
+            items.push({
+              id: "cubePickup",
+              x: 400,
+              y: 100,
+              w: 30,
+              h: 30,
+              color: 0xffffff,
+              onCollect: () => {
+                inventory.hasCubeHand = true;
+                cloneActiveHand = cubeHand;
+                updateWristUI("Acquired Heavy Cube Hand!");
+                loadRoom(currentRoom);
+              },
+            });
           }
 
-          if (!flags.wackAWuggyBeaten && inventory.hasCubeHand) {
-            // Pipes on all 4 walls
-            let wx = [100, 660, 380, 380]; let wy = [300, 300, 100, 460];
-            for (let i = 0; i < 4; i++) {
-              walls.push({ x: wx[i]-10, y: wy[i]-10, w: 60, h: 60, color: 0x111111 });
-              shootables.push({ id: "wuggy"+i, x: wx[i], y: wy[i], w: 40, h: 40, color: 0x222222, isWuggy: true, timer: 0, onHit: (obj, hand) => {
-                  if (hand.isHeavy && obj.color === 0xff0000) {
-                    obj.color = 0x222222; wackScore++; alertMsg(`SMASH! Score: ${wackScore}/8`); build3DRoom();
-                    if (wackScore >= 8) { flags.wackAWuggyBeaten = true; alertMsg("WACK-A-WUGGY CLEARED!"); loadRoom(currentRoom); }
-                  } else if (!hand.isHeavy && obj.color === 0xff0000) alertMsg("Normal hand bounces off! Use Heavy Cube!");
-              }});
-            }
-            walls.push({ id: "statueDoor", x: 350, y: 0, w: 100, h: 20, color: 0x333333 });
-          } else if (flags.wackAWuggyBeaten) {
-            triggers.push({ x: 350, y: 0, w: 100, h: 20, action: () => loadRoom(isMirrorWorld ? "mirror_statuesChase" : "statuesChase") });
-          }
-
-        } else if (baseRoom === "statuesChase") {
-          currentObjective = "STATUES: Freezes in Light, Sprints in Dark! DO NOT MOVE IN THE LIGHT!";
-          walls.push({ x: 300, y: 0, w: 20, h: 600 }, { x: 480, y: 0, w: 20, h: 600 }, { x: 320, y: 580, w: 160, h: 20 });
-          
-          createSign("STATUES CHASE", 400, 40, 500, 0);
-          createSign("DO NOT MOVE WHEN LIGHT IS ON", 400, 30, 400, 0);
-
-          triggers.push({ x: 320, y: 0, w: 160, h: 20, action: () => loadRoom(isMirrorWorld ? "mirror_trainStation" : "trainStation") });
-
-          flags.statueLightOn = true; flags.statueTimer = 100;
-          evilHuggy.active = true; evilHuggy.x = 400; evilHuggy.z = 650; evilHuggy.speed = 0;
-
-        } else if (baseRoom === "trainStation") {
-          currentObjective = "Final Puzzle: Use Shadow Hand to hit switch behind you!";
-          walls.push({ x: 0, y: 0, w: 800, h: 20 }, { x: 0, y: 580, w: 800, h: 20 }, { x: 0, y: 20, w: 20, h: 560 }, { x: 780, y: 20, w: 20, h: 560 });
-          
-          // Glass wall separating you from the train
-          walls.push({ x: 20, y: 200, w: 760, h: 20, color: 0x00ffff, transparent: true, opacity: 0.2 });
-
-          if (!flags.trainPowered) {
-              createSign("POWER SWITCH HIDDEN BEHIND YOU", 400, 40, 300, 0);
-              // Switch is at z=500, player faces z=200. Must use Shadow Hand.
-              shootables.push({ x: 380, y: 480, w: 40, h: 40, color: 0xff0000, onHit: (obj, hand) => {
-                  if (hand === shadowHand) { flags.trainPowered = true; alertMsg("TRAIN POWERED! Break the lock!"); loadRoom(currentRoom); }
-                  else alertMsg("Switch too far to hit normally!");
-              }});
-          } else if (!flags.trainUnlocked) {
-              createSign("SMASH LOCK WITH CUBE", 400, 40, 180, 0);
-              shootables.push({ x: 380, y: 180, w: 40, h: 40, color: 0xffffff, transparent: true, opacity: 0.5, onHit: (obj, hand) => {
-                  if (hand.isHeavy) { flags.trainUnlocked = true; alertMsg("LOCK BROKEN! BOARD TRAIN!"); loadRoom(currentRoom); }
-                  else alertMsg("Hand too weak to break lock!");
-              }});
+          if (!flags.stationPower) {
+            shootables.push({
+              x: 380,
+              y: 150,
+              w: 40,
+              h: 40,
+              color: 0xffffff,
+              reqColor: 0xffffff,
+              onHit: (obj, hand) => {
+                if (isControllingClone && hand.isHeavy) {
+                  flags.stationPower = true;
+                  loadRoom(currentRoom);
+                  alertMsg("Power Restored! Swap back to Real Body!");
+                } else if (isControllingClone) {
+                  alertMsg("Ghost Hand too weak! Need Cube Hand!");
+                }
+              },
+            });
+            walls.push({
+              id: "memDoor",
+              x: 780,
+              y: 250,
+              w: 20,
+              h: 100,
+              color: 0x333333,
+            });
           } else {
-              createSign("TRAIN BOARDED! CHAPTER 2 DEMO COMPLETE!", 400, 50, 100, 0);
+            triggers.push({
+              x: 780,
+              y: 250,
+              w: 30,
+              h: 100,
+              action: () =>
+                loadRoom(
+                  isMirrorWorld ? "mirror_musicalMemory" : "musicalMemory"
+                ),
+            });
           }
+          if (isMirrorWorld) evilHuggy.active = true;
+        } else if (baseRoom === "musicalMemory") {
+          currentObjective = flags.memoryBeaten
+            ? "Proceed to Wack-A-Wuggy!"
+            : "Hit Colors in Order!";
+          walls.push(
+            { x: 0, y: 0, w: 800, h: 20 },
+            { x: 0, y: 580, w: 800, h: 20 },
+            { x: 0, y: 20, w: 20, h: 560 },
+            { x: 780, y: 20, w: 20, h: 560 }
+          );
+
+          let seq = [0x00aaff, 0xff0000, 0x00ff00, 0xff00ff];
+          let seqIdx = 0;
+          let btnColors = [0x00aaff, 0xff0000, 0x00ff00, 0xff00ff];
+          let bx = [300, 450, 300, 450];
+          let by = [200, 200, 350, 350];
+
+          if (!flags.memoryBeaten) {
+            btnColors.forEach((c, i) => {
+              shootables.push({
+                x: bx[i],
+                y: by[i],
+                w: 50,
+                h: 50,
+                color: c,
+                reqColor: c,
+                onHit: () => {
+                  if (c === seq[seqIdx]) {
+                    seqIdx++;
+                    alertMsg(`Correct! ${seqIdx}/4`);
+                    if (seqIdx >= 4) {
+                      flags.memoryBeaten = true;
+                      alertMsg("Memory Cleared! Door Open!");
+                      loadRoom(currentRoom);
+                    }
+                  } else {
+                    seqIdx = 0;
+                    alertMsg("WRONG! Restarting sequence.");
+                  }
+                },
+              });
+            });
+            walls.push({
+              id: "wackDoor",
+              x: 350,
+              y: 0,
+              w: 100,
+              h: 20,
+              color: 0x333333,
+            });
+          } else {
+            triggers.push({
+              x: 350,
+              y: 0,
+              w: 100,
+              h: 20,
+              action: () =>
+                loadRoom(isMirrorWorld ? "mirror_wackAWuggy" : "wackAWuggy"),
+            });
+          }
+        } else if (baseRoom === "wackAWuggy") {
+          currentObjective = flags.wackAWuggyBeaten
+            ? "Proceed to Statues!"
+            : "Clone: Smash 5 Wuggies with Cube Hand!";
+          walls.push(
+            { x: 0, y: 0, w: 800, h: 20 },
+            { x: 0, y: 580, w: 800, h: 20 },
+            { x: 0, y: 20, w: 20, h: 560 },
+            { x: 780, y: 20, w: 20, h: 560 }
+          );
+
+          // Pipes for the Wuggies
+          walls.push({ x: 150, y: 150, w: 100, h: 20 });
+          walls.push({ x: 350, y: 150, w: 100, h: 20 });
+          walls.push({ x: 550, y: 150, w: 100, h: 20 });
+          walls.push({ x: 350, y: 350, w: 100, h: 20 });
+
+          if (!flags.wackAWuggyBeaten) {
+            let wx = [180, 380, 580, 380];
+            let wy = [140, 140, 140, 340];
+            for (let i = 0; i < 4; i++) {
+              shootables.push({
+                id: "wuggy" + i,
+                x: wx[i],
+                y: wy[i],
+                w: 40,
+                h: 40,
+                color: 0x222222,
+                isWuggy: true,
+                timer: 0,
+                onHit: (obj, hand) => {
+                  if (hand.isHeavy && obj.color === 0xff0000) {
+                    obj.color = 0x222222;
+                    wackScore++;
+                    alertMsg(`SMASH! Score: ${wackScore}/5`);
+                    build3DRoom();
+                    if (wackScore >= 5) {
+                      flags.wackAWuggyBeaten = true;
+                      alertMsg("WACK-A-WUGGY CLEARED!");
+                      loadRoom(currentRoom);
+                    }
+                  } else if (!hand.isHeavy && obj.color === 0xff0000) {
+                    alertMsg("Normal hand bounces off! Use Heavy Cube!");
+                  }
+                },
+              });
+            }
+            walls.push({
+              id: "statueDoor",
+              x: 350,
+              y: 0,
+              w: 100,
+              h: 20,
+              color: 0x333333,
+            });
+          } else {
+            triggers.push({
+              x: 350,
+              y: 0,
+              w: 100,
+              h: 20,
+              action: () =>
+                loadRoom(
+                  isMirrorWorld ? "mirror_statuesChase" : "statuesChase"
+                ),
+            });
+          }
+        } else if (baseRoom === "statuesChase") {
+          currentObjective = "RUN! CUBE HAND SMASHES HEAVY GHOST BLOCKS!";
+          walls.push(
+            { x: 300, y: 0, w: 20, h: 600 },
+            { x: 480, y: 0, w: 20, h: 600 },
+            { x: 320, y: 580, w: 160, h: 20 }
+          );
+
+          shootables.push({
+            id: "heavyBlock1",
+            x: 320,
+            y: 400,
+            w: 160,
+            h: 20,
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.5,
+            onHit: (obj, hand) => {
+              if (hand.isHeavy) {
+                obj.color = 0x00aa00;
+                shootables = shootables.filter((s) => s.id !== "heavyBlock1");
+                walls = walls.filter((w) => w.id !== "hbWall1");
+                build3DRoom();
+                alertMsg("Block Smashed!");
+              }
+            },
+          });
+          walls.push({
+            id: "hbWall1",
+            x: 320,
+            y: 400,
+            w: 160,
+            h: 20,
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.5,
+          });
+
+          triggers.push({
+            x: 320,
+            y: 0,
+            w: 160,
+            h: 20,
+            action: () => alertMsg("ESCAPED THE CHASE! YOU WIN!"),
+          });
+
+          if (!isMirrorWorld) huggy.active = true;
+          else evilHuggy.active = true;
+          let activeE = isMirrorWorld ? evilHuggy : huggy;
+          activeE.x = 400;
+          activeE.z = 650;
+          activeE.speed = 3.2;
         }
 
         if (isMirrorWorld) {
           let p = isControllingClone ? mirrorClone : player;
           p.x = 800 - p.x - p.w;
-          [walls, shootables, triggers, items, floorSwitches, signs].forEach((arr) =>
-            arr.forEach((obj) => { if (obj.x !== undefined) obj.x = 800 - obj.x - (obj.w || 0); })
+          [walls, shootables, triggers, items, floorSwitches].forEach((arr) =>
+            arr.forEach((obj) => {
+              if (obj.x !== undefined) obj.x = 800 - obj.x - (obj.w || 0);
+            })
           );
         }
-        updateWristUI(); build3DRoom();
+        updateWristUI();
+        build3DRoom();
       }
 
       function update() {
-        pollGamepads(); handleLocomotion();
+        pollGamepads();
+        handleLocomotion();
         rearCamera.position.copy(camera.getWorldPosition(new THREE.Vector3()));
-        rearCamera.quaternion.copy(camera.getWorldQuaternion(new THREE.Quaternion()));
+        rearCamera.quaternion.copy(
+          camera.getWorldQuaternion(new THREE.Quaternion())
+        );
         rearCamera.rotateY(Math.PI);
 
-        // --- Timers & Dynamic Room Logic ---
-        if (flags.greenChargeTime > 0) {
-            flags.greenChargeTime--;
-            if (flags.greenChargeTime % 60 === 0) updateWristUI(); 
-            if (flags.greenChargeTime === 0) alertMsg("Green Hand lost its charge!");
+        let currentViewWorld = isMirrorWorld ? "mirror" : "real";
+
+        if (isControllingClone) {
+          scene.fog.color.setHex(0x00ffff);
+          renderer.setClearColor(0x002244);
+          hemiLight.color.setHex(0x00ffff);
+          realBodyMesh.visible = player.world === currentViewWorld;
+          realBodyMesh.position.set(player.x, 10, player.z);
+          cloneGroup.visible = false;
+        } else {
+          scene.fog.color.setHex(isMirrorWorld ? 0xffffff : 0x1a1a1a);
+          renderer.setClearColor(isMirrorWorld ? 0xcccccc : 0x0a0a0a);
+          hemiLight.color.setHex(0xffffff);
+          realBodyMesh.visible = false;
+          cloneGroup.visible =
+            mirrorClone.active && mirrorClone.world === currentViewWorld;
+          cloneGroup.position.set(mirrorClone.x, 0, mirrorClone.z);
         }
 
-        if (currentRoom.includes("wackAWuggy") && !flags.wackAWuggyBeaten && inventory.hasCubeHand) {
-          if (Math.random() < 0.03) {
-            let inactive = shootables.filter((s) => s.isWuggy && s.color === 0x222222);
+        let pRect = {
+          x: player.x - player.w / 2,
+          y: player.z - player.h / 2,
+          w: player.w,
+          h: player.h,
+        };
+        let cRect = {
+          x: mirrorClone.x - player.w / 2,
+          y: mirrorClone.z - player.h / 2,
+          w: player.w,
+          h: player.h,
+        };
+        let actRect = isControllingClone ? cRect : pRect;
+
+        if (!isControllingClone) {
+          triggers.forEach((t) => {
+            if (isColliding(actRect, t)) t.action();
+          });
+          items.forEach((i) => {
+            if (isColliding(actRect, i) && !i.collected) {
+              i.collected = true;
+              i.onCollect();
+            }
+          });
+        } else {
+          triggers.forEach((t) => {
+            if (t.isPortal && isColliding(actRect, t)) t.action();
+          });
+          items.forEach((i) => {
+            if (isColliding(actRect, i) && !i.collected) {
+              i.collected = true;
+              i.onCollect();
+            }
+          });
+        }
+
+        floorSwitches.forEach((sw) => {
+          let on =
+            (mirrorClone.world === currentViewWorld &&
+              isColliding(cRect, sw)) ||
+            (!isControllingClone &&
+              player.world === currentViewWorld &&
+              isColliding(pRect, sw));
+          if (on && !sw.isPressed) {
+            sw.isPressed = true;
+            if (sw.mesh) sw.mesh.position.y = 1;
+            if (sw.onActivate) sw.onActivate();
+          } else if (!on && sw.isPressed) {
+            sw.isPressed = false;
+            if (sw.mesh) sw.mesh.position.y = 2;
+            if (sw.onDeactivate) sw.onDeactivate();
+          }
+        });
+
+        // Wack-A-Wuggy Dynamic Logic
+        if (currentRoom.includes("wackAWuggy") && !flags.wackAWuggyBeaten) {
+          if (Math.random() < 0.02) {
+            let inactive = shootables.filter(
+              (s) => s.isWuggy && s.color === 0x222222
+            );
             if (inactive.length > 0) {
               let w = inactive[Math.floor(Math.random() * inactive.length)];
-              w.color = 0xff0000; w.timer = 100; build3DRoom();
+              w.color = 0xff0000;
+              w.timer = 150;
+              build3DRoom();
             }
           }
           let needsRebuild = false;
           shootables.forEach((s) => {
             if (s.isWuggy && s.color === 0xff0000) {
-              if (s.timer > 0) s.timer--; else { s.color = 0x222222; needsRebuild = true; }
+              if (s.timer > 0) s.timer--;
+              else {
+                s.color = 0x222222;
+                needsRebuild = true;
+              } // Time ran out, hide back in pipe
             }
           });
           if (needsRebuild) build3DRoom();
         }
 
-        if (currentRoom.includes("statuesChase")) {
-            flags.statueTimer--;
-            if (flags.statueTimer <= 0) {
-                flags.statueLightOn = !flags.statueLightOn;
-                flags.statueTimer = flags.statueLightOn ? 80 : 150; 
-                hemiLight.intensity = flags.statueLightOn ? 1.5 : 0.05;
-                flashLight.intensity = flags.statueLightOn ? 2.0 : 0.2;
-                if(flags.statueLightOn) alertMsg("RED LIGHT! FREEZE!");
-            }
-            if (flags.statueLightOn && (Math.abs(moveDX) > 0 || Math.abs(moveDZ) > 0)) {
-                evilHuggy.speed = 10; // Instantly sprint at player if moving in the light!
-            } else if (!flags.statueLightOn) {
-                evilHuggy.speed = 1.8; // Creep in the dark
-            } else {
-                evilHuggy.speed = 0; // Frozen while light is on and player is still
-            }
-        }
-
-        let currentViewWorld = isMirrorWorld ? "mirror" : "real";
-        if (isControllingClone) {
-          scene.fog.color.setHex(0x00ffff); renderer.setClearColor(0x002244); hemiLight.color.setHex(0x00ffff);
-          realBodyMesh.visible = player.world === currentViewWorld; realBodyMesh.position.set(player.x, 10, player.z); cloneGroup.visible = false;
-        } else {
-          if (!currentRoom.includes("statuesChase")) scene.fog.color.setHex(isMirrorWorld ? 0xffffff : 0x1a1a1a); 
-          renderer.setClearColor(isMirrorWorld ? 0xcccccc : 0x0a0a0a); 
-          if (!currentRoom.includes("statuesChase")) hemiLight.color.setHex(0xffffff);
-          realBodyMesh.visible = false;
-          cloneGroup.visible = mirrorClone.active && mirrorClone.world === currentViewWorld;
-          cloneGroup.position.set(mirrorClone.x, 0, mirrorClone.z);
-        }
-
-        let actRect = isControllingClone ? { x: mirrorClone.x - player.w/2, y: mirrorClone.z - player.h/2, w: player.w, h: player.h } : { x: player.x - player.w/2, y: player.z - player.h/2, w: player.w, h: player.h };
-
-        if (!isControllingClone) {
-          triggers.forEach((t) => { if (isColliding(actRect, t)) t.action(); });
-          items.forEach((i) => { if (isColliding(actRect, i) && !i.collected) { i.collected = true; i.onCollect(); } });
-        } else {
-          triggers.forEach((t) => { if (t.isPortal && isColliding(actRect, t)) t.action(); });
-          items.forEach((i) => { if (isColliding(actRect, i) && !i.collected) { i.collected = true; i.onCollect(); } });
-        }
-
-        [blueHand, pinkHand, shadowHand, redHand, greenHand, crystalHand, whiteHand, cubeHand].forEach((hand) => {
+        // Fixed Hand Retraction Math
+        [
+          blueHand,
+          pinkHand,
+          shadowHand,
+          redHand,
+          greenHand,
+          crystalHand,
+          whiteHand,
+          cubeHand,
+        ].forEach((hand) => {
           if (hand.state === "extending") {
-            hand.mesh.position.addScaledVector(hand.dir, hand.speed); hand.dist += hand.speed;
-            let hr = { x: hand.mesh.position.x - 10, y: hand.mesh.position.z - 10, w: 20, h: 20 };
+            hand.mesh.position.addScaledVector(hand.dir, hand.speed);
+            hand.dist += hand.speed;
+            let hr = {
+              x: hand.mesh.position.x - 10,
+              y: hand.mesh.position.z - 10,
+              w: 20,
+              h: 20,
+            };
             if (hand.dist > hand.maxDist) hand.state = "retracting";
 
             let hit = false;
             for (let s of shootables) {
               if (isColliding(hr, s)) {
                 if (s.reqColor && hand.color !== s.reqColor) {
-                  let oldColor = s.color; s.color = 0x555555; build3DRoom();
-                  setTimeout(() => { s.color = oldColor; build3DRoom(); }, 300);
-                } else s.onHit(s, hand);
-                hand.state = "retracting"; hit = true; break;
+                  let oldColor = s.color;
+                  s.color = 0x555555;
+                  build3DRoom();
+                  setTimeout(() => {
+                    s.color = oldColor;
+                    build3DRoom();
+                  }, 300);
+                } else {
+                  s.onHit(s, hand);
+                }
+                hand.state = "retracting";
+                hit = true;
+                break;
               }
             }
             if (!hit && !hand.ignoresWalls) {
-              for (let w of walls) { if (!w.isPortal && isColliding(hr, w)) { hand.state = "retracting"; break; } }
+              for (let w of walls) {
+                if (w.id !== "mirrorPortal" && isColliding(hr, w)) {
+                  hand.state = "retracting";
+                  break;
+                }
+              }
             }
           } else if (hand.state === "retracting") {
-            let c = (leftHandInventory.includes(hand) || hand === whiteHand || hand === cubeHand) ? leftController : rightController;
-            if (!c) { hand.state = "idle"; return; }
-            let tPos = new THREE.Vector3(); c.getWorldPosition(tPos);
-            let toCam = new THREE.Vector3().subVectors(tPos, hand.mesh.position);
-            if (toCam.length() < hand.speed * 1.5) { hand.state = "idle"; hand.mesh.visible = false; hand.wire.visible = false; } 
-            else { toCam.normalize(); hand.mesh.position.addScaledVector(toCam, hand.speed); }
+            let c =
+              leftHandInventory.includes(hand) ||
+              hand === whiteHand ||
+              hand === cubeHand
+                ? leftController
+                : rightController;
+            if (!c) {
+              hand.state = "idle";
+              return;
+            }
+            let tPos = new THREE.Vector3();
+            c.getWorldPosition(tPos);
+            let toCam = new THREE.Vector3().subVectors(
+              tPos,
+              hand.mesh.position
+            );
+
+            // Fixed: Hands smoothly retract all the way to the controller nozzle before resetting
+            if (toCam.length() < hand.speed * 1.5) {
+              hand.state = "idle";
+              hand.mesh.visible = false;
+              hand.wire.visible = false;
+            } else {
+              toCam.normalize();
+              hand.mesh.position.addScaledVector(toCam, hand.speed);
+            }
           }
 
           if (hand.state !== "idle") {
             hand.wire.visible = true;
-            let c = (leftHandInventory.includes(hand) || hand === whiteHand || hand === cubeHand) ? leftController : rightController;
-            let sPos = new THREE.Vector3(); if (c) c.getWorldPosition(sPos);
-            let ePos = hand.mesh.position; let dist = sPos.distanceTo(ePos);
-            hand.wire.scale.set(1, dist, 1); hand.wire.position.copy(sPos).lerp(ePos, 0.5);
-            hand.wire.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), ePos.clone().sub(sPos).normalize());
+            let c =
+              leftHandInventory.includes(hand) ||
+              hand === whiteHand ||
+              hand === cubeHand
+                ? leftController
+                : rightController;
+            let sPos = new THREE.Vector3();
+            if (c) c.getWorldPosition(sPos);
+            let ePos = hand.mesh.position;
+            let dist = sPos.distanceTo(ePos);
+            hand.wire.scale.set(1, dist, 1);
+            hand.wire.position.copy(sPos).lerp(ePos, 0.5);
+            hand.wire.quaternion.setFromUnitVectors(
+              new THREE.Vector3(0, 1, 0),
+              ePos.clone().sub(sPos).normalize()
+            );
           }
         });
 
-        if (evilHuggy.active) {
-          let tgtX = isControllingClone ? mirrorClone.x : player.x;
-          let tgtZ = isControllingClone ? mirrorClone.z : player.z;
-          evilHuggy.mesh.visible = true;
-          if(evilHuggy.speed > 0) {
-              let angle = Math.atan2(tgtZ - evilHuggy.z, tgtX - evilHuggy.x);
-              evilHuggy.x += Math.cos(angle) * evilHuggy.speed; evilHuggy.z += Math.sin(angle) * evilHuggy.speed;
-          }
-          evilHuggy.mesh.position.set(evilHuggy.x, 0, evilHuggy.z); evilHuggy.mesh.lookAt(tgtX, 20, tgtZ);
-          if (Math.hypot(tgtX - evilHuggy.x, tgtZ - evilHuggy.z) < 30 && !isDead) {
-            isDead = true; alertMsg("CAUGHT BY PUG-A-PILLAR!"); evilHuggy.active = false;
-            setTimeout(() => loadRoom(currentRoom), 2000);
-          }
-        } else evilHuggy.mesh.visible = false;
+        [huggy, evilHuggy].forEach((enemy) => {
+          if (enemy.active) {
+            let tgtX = isControllingClone ? mirrorClone.x : player.x;
+            let tgtZ = isControllingClone ? mirrorClone.z : player.z;
+            enemy.mesh.visible = true;
+            let angle = Math.atan2(tgtZ - enemy.z, tgtX - enemy.x);
+            enemy.x += Math.cos(angle) * enemy.speed;
+            enemy.z += Math.sin(angle) * enemy.speed;
+            enemy.mesh.position.set(enemy.x, 0, enemy.z);
+            enemy.mesh.lookAt(tgtX, 20, tgtZ);
+            if (Math.hypot(tgtX - enemy.x, tgtZ - enemy.z) < 30 && !isDead) {
+              isDead = true;
+              alertMsg("CAUGHT!");
+              enemy.active = false;
+              setTimeout(() => loadRoom(currentRoom), 2000);
+            }
+          } else enemy.mesh.visible = false;
+        });
       }
 
       function animate() {
         update();
-        const wasXR = renderer.xr.enabled; const oldTarget = renderer.getRenderTarget();
-        renderer.xr.enabled = false; renderer.setRenderTarget(mirrorTarget);
+        const wasXR = renderer.xr.enabled;
+        const oldTarget = renderer.getRenderTarget();
+        renderer.xr.enabled = false;
+        renderer.setRenderTarget(mirrorTarget);
         renderer.render(scene, rearCamera);
-        renderer.setRenderTarget(oldTarget); renderer.xr.enabled = wasXR;
+        renderer.setRenderTarget(oldTarget);
+        renderer.xr.enabled = wasXR;
         renderer.render(scene, camera);
       }
-      
-      document.getElementById("dbg-warp").addEventListener("click", () => { loadRoom(document.getElementById("dbg-room").value); });
-      loadRoom("startDrop"); renderer.setAnimationLoop(animate);
+      // FIX: Re-wired the Debug Menu Warping
+      document.getElementById("dbg-warp").addEventListener("click", () => {
+        loadRoom(document.getElementById("dbg-room").value);
+      });
+      loadRoom("startDrop");
+      renderer.setAnimationLoop(animate);
     </script>
   </body>
 </html>
-
